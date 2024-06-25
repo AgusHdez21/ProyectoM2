@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template, jsonify
 import joblib
-import pandas as pd
+import pandas as pd 
 import logging
 
 app = Flask(__name__)
@@ -13,18 +13,20 @@ model = joblib.load('modelo.pkl')
 app.logger.debug('Modelo cargado correctamente.')
 
 @app.route('/')
-def home():
+def home(): 
     return render_template('formulario.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
         # Obtener los datos enviados en el request
-        abdomen = float(request.form['abdomen'])
-        antena = float(request.form['antena'])
+        max_power = float(request.form['max_power (in bph)'])
+        year = float(request.form['year'])
+        driven = float(request.form['km_driven'])
+        gas = float(request.form['fuel'])
         
         # Crear un DataFrame con los datos
-        data_df = pd.DataFrame([[abdomen, antena]], columns=['abdomen', 'antena'])
+        data_df = pd.DataFrame([[max_power, year, driven, gas]], columns=['max_power (in bph)', 'year','km_driven','fuel'])
         app.logger.debug(f'DataFrame creado: {data_df}')
         
         # Realizar predicciones

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Clasificador de Insectos</title>
+    <title>Prediccion de Datos de Autos</title>
     <script>
         function clasificarInsecto(event) {
             event.preventDefault();
@@ -15,14 +15,14 @@
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `abdomen=${abdomen}&antena=${antena}`,
+                body: `max_power (in bph)=${max_power}&year=${year}&km_driven=${driven}&fuel=${gas}`,
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
                     document.getElementById('resultado').innerText = 'Error: ' + data.error;
                 } else {
-                    document.getElementById('resultado').innerText = 'El insecto es una ' + data.categoria;
+                    document.getElementById('resultado').innerText = 'El precio del automovil es ' + data.categoria;
                 }
             })
             .catch(error => {
@@ -33,12 +33,20 @@
     </script>
 </head>
 <body>
-    <h1>Clasificador de Insectos</h1>
+    <h1>Prediccion de Precios de Autos</h1>
     <form id="formulario" onsubmit="clasificarInsecto(event)">
-        <label for="abdomen">Longitud del Abdomen:</label>
-        <input type="text" id="abdomen" name="abdomen"><br><br>
-        <label for="antena">Longitud de las Antenas:</label>
-        <input type="text" id="antena" name="antena"><br><br>
+        <label for="max_power (in bph)">Longitud del Abdomen:</label>
+        <input type="text" id="max_power (in bph)" name="max_power (in bph)"><br><br>
+
+        <label for="year">Longitud de las Antenas:</label>
+        <input type="text" id="year" name="year"><br><br>
+
+        <label for="km_driven">Longitud de las Antenas:</label>
+        <input type="text" id="km_driven" name="km_driven"><br><br>
+
+        <label for="fuel">Longitud de las Antenas:</label>
+        <input type="text" id="fuel" name="fuel"><br><br>
+
         <input type="submit" value="Enviar">
     </form>
     <p id="resultado"></p>
