@@ -2,21 +2,28 @@ from flask import Flask, request, render_template, jsonify
 import joblib
 import pandas as pd  
 import logging
+import re
 
 app = Flask(__name__)
 
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
 
-# Definir la función create_model_RFE
-def create_model_RFE():
-    # Aquí va la definición de tu función
-    pass
+# Cargar el modelo entrenado y el scaler
+try:
+    model = joblib.load('modeloNeuR2.pkl')
+    scaler = joblib.load('dataSetScalado.pkl')
+    app.logger.debug('Modelo y escalador cargados correctamente.')
+except Exception as e:
+    app.logger.error(f'Error al cargar el modelo: {str(e)}')
 
-# Cargar el modelo entrenado
-model = joblib.load('modeloNeuR2.pkl')
-scaler = joblib.load('dataSetScalado.pkl')
-app.logger.debug('Modelo cargado correctamente.')
+def clean_and_convert(value):
+    # Función para limpiar y convertir valores
+    clean_value = re.sub(r'[^\d.-]', '', value)
+    try:
+        return float(clean_value)
+    except ValueError:
+        return None
 
 @app.route('/')
 def home(): 
@@ -26,13 +33,29 @@ def home():
 def predict():
     try:
         # Obtener los datos enviados en el request
-        max_power = float(request.form['max_power (in bph)'])
-        year = float(request.form['year'])
-        driven = float(request.form['km_driven'])
-        gas = float(request.form['fuel'])
+        max_power_raw = request.form['max_power (in bph)']
+        year_raw = request.form['year']
+        driven_raw = request.form['km_driven']
+        fuel = request.form['fuel']
 
-        # Verificar los datos recibidos
-        app.logger.debug(f'max_power (in bph): {max_power}, year: { year }, km_driven: {driven}, fuel: {gas}')
+        # Limpiar y convertir los valores
+        max_power = clean_and_convert(max_power_raw)
+        year = clean_and_convert(year_raw)
+        driven = clean_and_convert(driven_raw)
+
+        # Mapeo de valores de combustible a numéricos si es necesario
+        fuel_map = {
+            'Diesel': 0,
+            'Petrol': 1,
+            'CNG': 2,
+            'LPG': 3,
+            'Electric': 4
+        }
+        gas = fuel_map.get(fuel, None)
+
+        # Verificar que los datos hayan sido convertidos correctamente
+        if None in [max_power, year, driven, gas]:
+            raise ValueError("Datos inválidos recibidos")
 
         input_data = pd.DataFrame({
             'Unnamed: 0': [0],
@@ -56,7 +79,8 @@ def predict():
         scaled_data = scaler.transform(input_data)
 
         # Seleccionar solo las características usadas para el modelo
-        scaled_data_for_prediction = scaled_data[:, [2, 3, 4, 8]]  # Asegúrate de que estos índices son correctos
+        # Asegúrate de que estos índices sean correctos según cómo escalaste tus datos
+        scaled_data_for_prediction = scaled_data[:, [2, 3, 4, 8]]
 
         # Realizar la predicción con los datos escalados
         prediccion = model.predict(scaled_data_for_prediction)
