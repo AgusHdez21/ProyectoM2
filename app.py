@@ -8,6 +8,11 @@ app = Flask(__name__)
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
 
+# Definir la función create_model_RFE
+def create_model_RFE():
+    # Aquí va la definición de tu función
+    pass
+
 # Cargar el modelo entrenado
 model = joblib.load('modeloNeuR2.pkl')
 scaler = joblib.load('dataSetScalado.pkl')
@@ -26,7 +31,7 @@ def predict():
         driven = float(request.form['km_driven'])
         gas = float(request.form['fuel'])
 
-        #Verificar los datos recibidos
+        # Verificar los datos recibidos
         app.logger.debug(f'max_power (in bph): {max_power}, year: { year }, km_driven: {driven}, fuel: {gas}')
 
         input_data = pd.DataFrame({
@@ -67,4 +72,3 @@ def predict():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
