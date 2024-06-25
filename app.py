@@ -43,7 +43,7 @@ def predict():
             'seller_type': [0],
             'owner': [0],
             'seats': [0],
-            'max_power (in bph)	': [max_power],
+            'max_power (in bph)': [max_power],
             'Mileage': [0], 
             'Engine (CC)': [0],
             'Mileage Unit_km/kg': [0],
