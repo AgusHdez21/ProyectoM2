@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
 
-# Definir el modelo y el scaler como variables globales
+# Cargar el modelo entrenado y el scaler
 try:
     model = joblib.load('modeloNeuR2.pkl')
     scaler = joblib.load('dataSetScalado.pkl')
@@ -17,8 +17,8 @@ try:
 except Exception as e:
     app.logger.error(f'Error al cargar el modelo: {str(e)}')
 
+# Función para limpiar y convertir valores
 def clean_and_convert(value):
-    # Función para limpiar y convertir valores
     clean_value = re.sub(r'[^\d.-]', '', value)
     try:
         return float(clean_value)
