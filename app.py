@@ -9,7 +9,7 @@ app = Flask(__name__)
 # Configurar el registro
 logging.basicConfig(level=logging.DEBUG)
 
-# Cargar el modelo entrenado y el scaler
+# Definir el modelo y el scaler como variables globales
 try:
     model = joblib.load('modeloNeuR2.pkl')
     scaler = joblib.load('dataSetScalado.pkl')
